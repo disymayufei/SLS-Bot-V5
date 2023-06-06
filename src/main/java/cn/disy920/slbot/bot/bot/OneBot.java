@@ -300,7 +300,7 @@ public class OneBot implements RunnableBot{
             kickAllDeadMember();  // 移除所有退群玩家的ID
 
             /* 清除旧群残留玩家 */
-            // new Thread(NORMAL_MEMBER_OPERATES_INSTANCE::kickPassedMember, "Kick-Member-Thread").start();
+            new Thread(NORMAL_MEMBER_OPERATES_INSTANCE::kickPassedMember, "Kick-Member-Thread").start();
 
             LOGGER.info("机器人启动完成！");
         } catch (URISyntaxException e) {

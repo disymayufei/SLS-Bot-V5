@@ -114,7 +114,6 @@ public class MessageChain extends ArrayList<Message> {
         JsonArray result = new JsonArray();
 
         for (Message message : this) {
-            System.out.println(message);
             if (message instanceof PlainMessage plainText) {
                 JsonObject textMap = new JsonObject();
                 JsonObject node = new JsonObject();
