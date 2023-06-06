@@ -5,7 +5,10 @@ import cn.disy920.slbot.bot.bot.OneBot;
 import cn.disy920.slbot.bot.contact.Group;
 import cn.disy920.slbot.bot.contact.GroupMember;
 import cn.disy920.slbot.bot.contact.Member;
+import cn.disy920.slbot.bot.contact.Stranger;
 import cn.disy920.slbot.bot.event.GroupMessageEvent;
+import cn.disy920.slbot.bot.event.MemberJoinEvent;
+import cn.disy920.slbot.bot.event.MemberJoinRequestEvent;
 import cn.disy920.slbot.bot.message.MessageChain;
 import cn.disy920.slbot.utils.CacheManager;
 import cn.disy920.slbot.utils.GsonFactory;
@@ -52,7 +55,7 @@ public class WSClient extends WebSocketClient {
         launchHeartbeatThread();
 
         InetSocketAddress socketAddress = this.getRemoteSocketAddress();
-        LOGGER.info(String.format("成功连接至：ws://%s:%s", socketAddress.getHostString(), socketAddress.getPort()));
+        System.out.println(String.format("成功连接至：ws://%s:%s", socketAddress.getHostString(), socketAddress.getPort()));
     }
 
     @Override
@@ -151,6 +154,42 @@ public class WSClient extends WebSocketClient {
 
                     GroupMessageEvent groupMessageEvent = new GroupMessageEvent(timeStamp, botID, sender, messageChain, group);
                     Bot.getEventManager().addEvent(groupMessageEvent);
+                }
+            }
+
+            case "request" -> {
+                String type = packet.get("request_type").getAsString();
+
+                if (type.equals("group")) {
+
+                    Group group = new Group(packet.get("group_id").getAsLong());
+                    long id = packet.get("user_id").getAsLong();
+                    String nickName = Member.getNameCardOrNick(id);
+                    Stranger from = new Stranger(group, nickName, id);
+
+                    long timeStamp = packet.get("time").getAsLong();
+                    long botID = packet.get("self_id").getAsLong();
+
+                    String flag = packet.get("flag").getAsString();
+                    String sudType = packet.get("sub_type").getAsString();
+
+                    MemberJoinRequestEvent memberJoinRequestEvent = new MemberJoinRequestEvent(timeStamp, botID, group, from, null, flag, sudType);
+                    Bot.getEventManager().addEvent(memberJoinRequestEvent);
+                }
+            }
+
+            case "notice" -> {
+                String noticeType = packet.get("notice_type").getAsString();
+
+                if (noticeType.equals("group_increase")) {  // 群人数增加
+                    Group group = new Group(packet.get("group_id").getAsLong());
+                    GroupMember member = group.get(packet.get("user_id").getAsLong());
+
+                    long timeStamp = packet.get("time").getAsLong();
+                    long botID = packet.get("self_id").getAsLong();
+
+                    MemberJoinEvent memberJoinEvent = new MemberJoinEvent(timeStamp, botID, group, member);
+                    Bot.getEventManager().addEvent(memberJoinEvent);
                 }
             }
         }

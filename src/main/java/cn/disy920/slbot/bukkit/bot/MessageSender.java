@@ -24,6 +24,7 @@ public class MessageSender {
                 }
 
                 int imageHeight = 900 + 40 * (onlinePlayers.size() + 1);
+
                 InputStream queryServerImage = richImageGenerator.genQueryServerImage(onlinePlayers.size(), Calendar.getInstance().get(Calendar.YEAR), imageHeight, infoBuilder.toString(), 1);
 
                 if (queryServerImage != null) {

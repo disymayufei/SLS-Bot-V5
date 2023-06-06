@@ -59,6 +59,7 @@ public class Cache<T> {
             try {
                 lock.lockInterruptibly();
                 this.cache = cache;
+                counter++;
                 needWait.signal();
                 return true;
             }

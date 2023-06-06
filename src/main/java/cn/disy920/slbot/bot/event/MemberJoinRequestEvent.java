@@ -18,7 +18,7 @@ public class MemberJoinRequestEvent extends AbstractEvent implements Event {
     protected final Type type;  // 事件类型
 
 
-    protected MemberJoinRequestEvent(long timeStamp, long botID, Group group, Stranger from, @Nullable GroupMember invitor, String flag, String type) {
+    public MemberJoinRequestEvent(long timeStamp, long botID, Group group, Stranger from, @Nullable GroupMember invitor, String flag, String type) {
         super(timeStamp, botID);
 
         this.group = group;

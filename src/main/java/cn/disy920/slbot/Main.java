@@ -63,7 +63,7 @@ public final class Main extends JavaPlugin {
             listenedPort = 16123;
         }
 
-        WEBSOCKET_INSTANCE = new WSServer(new InetSocketAddress("127.0.0.1", listenedPort));
+        WEBSOCKET_INSTANCE = new WSServer(new InetSocketAddress("0.0.0.0", listenedPort));
 
         WSS_THREAD = new Thread(WEBSOCKET_INSTANCE);
         WSS_THREAD.start();

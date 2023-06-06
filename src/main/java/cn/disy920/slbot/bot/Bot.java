@@ -17,12 +17,27 @@ public class Bot {
 
     @Nullable
     public static Group getGroup(long id) {
+        int counter = 0;
+
+        while ((WSClient.botConnection == null || !WSClient.botConnection.isOpen()) && counter < 50) {
+            try {
+                Thread.sleep(100);
+                counter++;
+            } catch (InterruptedException e) {
+                return null;
+            }
+        }
+
+        if (WSClient.botConnection == null || !WSClient.botConnection.isOpen()) {
+            return null;
+        }
+
         Cache<JsonObject> cache = new Cache<>();
         String code = CacheManager.getInstance().addCache(cache);
 
         JsonObject params = new JsonObject();
         params.addProperty("group_id", id);
-        params.addProperty("no_cache", false);
+        params.addProperty("no_cache", true);
 
         WSClient.botConnection.sendWithEcho(WSClient.pack("get_group_info", params), code);
 

@@ -71,8 +71,8 @@ public class WSServer extends WebSocketServer {
     }
 
     @Override
-    public void onOpen(WebSocket conn, ClientHandshake handshake_data) {
-        // 什么都不需要干，交给上层自动完成连接
+    public void onOpen(WebSocket conn, ClientHandshake handshakeData) {
+        LOGGER.debug("检测到新连接：" + handshakeData.getResourceDescriptor());
     }
 
     @Override
@@ -100,6 +100,8 @@ public class WSServer extends WebSocketServer {
 
     @Override
     public void onMessage(WebSocket conn, String msg) {
+        LOGGER.debug(msg);
+
         JsonObject receiveObj;
 
         try {
@@ -275,16 +277,18 @@ public class WSServer extends WebSocketServer {
                                 sendQueryServerMessage(onlinePlayers, groupArray, PLUGIN_INSTANCE.getConfig().getBoolean("Enable_Image_Msg"));
                             }
 
-                            new BukkitRunnable(){
-                                @Override
-                                public void run() {
-                                    announceToAllGroups(groupArray, CHECK_SERVER_EXTRA_MSG.get(checkServerExtraMsgCounter));
-                                    checkServerExtraMsgCounter++;
-                                    if(checkServerExtraMsgCounter >= CHECK_SERVER_EXTRA_MSG.size()){
-                                        checkServerExtraMsgCounter = 0;
-                                    }
+                            new Thread(() -> {
+                                try {
+                                    Thread.sleep(2500);
+                                } catch (InterruptedException e) {
+                                    return;
                                 }
-                            }.runTaskLater(PLUGIN_INSTANCE, 5);
+                                announceToAllGroups(groupArray, CHECK_SERVER_EXTRA_MSG.get(checkServerExtraMsgCounter));
+                                checkServerExtraMsgCounter++;
+                                if(checkServerExtraMsgCounter >= CHECK_SERVER_EXTRA_MSG.size()){
+                                    checkServerExtraMsgCounter = 0;
+                                }
+                            }).start();
 
                         }
                         else if(clientIdentity.contains("Internal")){

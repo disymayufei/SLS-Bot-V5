@@ -7,7 +7,7 @@ public class MemberJoinEvent extends AbstractEvent implements GroupMemberEvent {
     protected final Group group;
     protected final GroupMember member;
 
-    protected MemberJoinEvent(long timeStamp, long botID, Group group, GroupMember member) {
+    public MemberJoinEvent(long timeStamp, long botID, Group group, GroupMember member) {
         super(timeStamp, botID);
 
         this.group = group;

@@ -1,7 +1,7 @@
 import cn.disy920.slbot.bot.Bot;
 import cn.disy920.slbot.bot.event.GroupMessageEvent;
-import cn.disy920.slbot.bot.event.listener.Listener;
 import cn.disy920.slbot.bot.event.annotations.BotEventHandler;
+import cn.disy920.slbot.bot.event.listener.Listener;
 import cn.disy920.slbot.bot.websocket.WSClient;
 
 import java.net.URI;
