@@ -110,63 +110,70 @@ public class MessageChain extends ArrayList<Message> {
     }
 
     @NotNull
-    public JsonObject serializeToJson() {
-        JsonObject result = new JsonObject();
+    public JsonArray serializeToJson() {
+        JsonArray result = new JsonArray();
 
         for (Message message : this) {
+            System.out.println(message);
             if (message instanceof PlainMessage plainText) {
                 JsonObject textMap = new JsonObject();
+                JsonObject node = new JsonObject();
 
-                textMap.addProperty("text", plainText.getPlainText());;
+                textMap.addProperty("text", plainText.getPlainText());
 
-                result.addProperty("type", "text");
-                result.add("data", textMap);
-            }
+                node.addProperty("type", "text");
+                node.add("data", textMap);
 
-            else if (message instanceof At at) {
+                result.add(node);
+            } else if (message instanceof At at) {
                 JsonObject atMap = new JsonObject();
+                JsonObject node = new JsonObject();
 
                 if (at.getTarget() == At.ALL) {
                     atMap.addProperty("qq", "all");
-                }
-                else {
+                } else {
                     atMap.addProperty("qq", Long.toString(at.getTarget()));
                 }
 
-                result.addProperty("type", "at");
-                result.add("data", atMap);
-            }
+                node.addProperty("type", "at");
+                node.add("data", atMap);
 
-            else if (message instanceof Image image) {
+                result.add(node);
+            } else if (message instanceof Image image) {
                 String imageUrl = image.convertToUrl();
 
                 if (imageUrl != null) {
                     JsonObject imageMap = new JsonObject();
+                    JsonObject node = new JsonObject();
 
                     imageMap.addProperty("file", imageUrl);
 
-                    result.addProperty("type", "image");
-                    result.add("data", imageMap);
+                    node.addProperty("type", "image");
+                    node.add("data", imageMap);
+
+                    result.add(node);
                 }
 
-            }
-
-            else if (message instanceof Face face) {
+            } else if (message instanceof Face face) {
                 JsonObject faceMap = new JsonObject();
+                JsonObject node = new JsonObject();
 
                 faceMap.addProperty("id", face.getFaceID());
 
-                result.addProperty("type", "face");
-                result.add("data", faceMap);
-            }
+                node.addProperty("type", "face");
+                node.add("data", faceMap);
 
-            else if (message instanceof  QuoteReply reply) {
+                result.add(node);
+            } else if (message instanceof QuoteReply reply) {
                 JsonObject replyMap = new JsonObject();
+                JsonObject node = new JsonObject();
 
                 replyMap.addProperty("id", reply.getMessageID());
 
-                result.addProperty("type", "reply");
-                result.add("data", replyMap);
+                node.addProperty("type", "reply");
+                node.add("data", replyMap);
+
+                result.add(node);
             }
         }
 

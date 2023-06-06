@@ -2,6 +2,7 @@ package cn.disy920.slbot.utils.container;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -34,6 +35,37 @@ public class Cache<T> {
         try {
             while (counter == 0) {
                 needWait.await();
+            }
+
+            counter--;
+
+            return this.cache;
+        }
+        catch (InterruptedException e) {
+            return null;
+        }
+        finally {
+            lock.unlock();
+        }
+    }
+
+    @Nullable
+    public T getCache(long milliTimeout) {
+        final ReentrantLock lock = this.lock;
+        try {
+            lock.lockInterruptibly();
+        }
+        catch (InterruptedException e) {
+            return null;
+        }
+
+        long nanos = TimeUnit.MILLISECONDS.toNanos(milliTimeout);
+
+        try {
+            while (counter == 0) {
+                if (nanos <= 0L)
+                    return null;
+                nanos = needWait.awaitNanos(nanos);
             }
 
             counter--;

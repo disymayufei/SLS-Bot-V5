@@ -41,7 +41,7 @@ public class Bot {
 
         WSClient.botConnection.sendWithEcho(WSClient.pack("get_group_info", params), code);
 
-        JsonObject response = cache.getCache();
+        JsonObject response = cache.getCache(1200);
 
         if (response != null && response.has("group_create_time") && !response.get("group_create_time").isJsonNull()) {
             return response.get("group_create_time").getAsLong() != 0 ? new Group(id) : null;

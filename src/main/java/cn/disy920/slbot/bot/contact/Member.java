@@ -36,7 +36,7 @@ public class Member extends User {
 
         WSClient.botConnection.sendWithEcho(WSClient.pack("get_stranger_info", params), code);
 
-        JsonObject response = cache.getCache();
+        JsonObject response = cache.getCache(useCache ? 600 : 1200);
 
         return response != null && !response.isJsonNull() ? response.get("nickname").getAsString() : "";
     }

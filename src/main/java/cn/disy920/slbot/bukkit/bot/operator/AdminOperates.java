@@ -99,6 +99,7 @@ public class AdminOperates {
                 event.getGroup().sendMessage("管理大大！你通过的真的是个QQ号嘛？");
                 return Command.SUCCESS;
             }
+
             ErrorPacket status = YamlDatabase.INSTANCE.passExam(QQNum);
 
             if (event.getGroup().contains(QQNum)) {

@@ -206,10 +206,11 @@ public class YamlDatabase implements Database {
             File playerDatabase = new File(QQ_DATA, (QQNumber + ".yml"));
 
             if (!playerDatabase.exists()) {
-                playerDatabase.createNewFile();  // 数据库不存在的时候自动创建一个
+                System.out.println(playerDatabase.createNewFile());  // 数据库不存在的时候自动创建一个
             }
 
             YamlConfiguration playerDatabaseYaml = YamlConfiguration.loadConfiguration(playerDatabase);
+
             if(playerDatabaseYaml.getBoolean("Had_Allowed")){
                 return ErrorPacket.create(BasicError.ALREADY_PASSED, ("请检查你输入的QQ号" + QQNumber + "是否正确！"));
             }

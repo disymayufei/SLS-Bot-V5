@@ -334,7 +334,7 @@ public class NormalMemberOperates {
 
         if (PLUGIN_INSTANCE.getConfig().getLongList("Bind_Only_Group").contains(groupID)) {
 
-            List<String> playerIDList = YamlDatabase.INSTANCE.checkBindIDWithOwner(senderID);
+            List<String> playerIDList = YamlDatabase.INSTANCE.checkBindID(senderID);
 
             if (playerIDList.size() == 0){
                 event.getGroup().sendMessage(new MessageChainBuilder().append(new At(senderID)).append("嘛？你没绑定过任何ID哦！").build());

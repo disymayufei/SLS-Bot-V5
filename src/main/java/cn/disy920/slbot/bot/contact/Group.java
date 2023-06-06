@@ -35,7 +35,7 @@ public class Group implements Contact {
 
         WSClient.botConnection.sendWithEcho(WSClient.pack("get_group_member_info", params), code);
 
-        JsonObject response = cache.getCache();
+        JsonObject response = cache.getCache(1200);
         
         if (response != null && !response.isJsonNull()) {
             long userID = response.get("user_id").getAsLong();
@@ -66,7 +66,7 @@ public class Group implements Contact {
 
         WSClient.botConnection.sendWithEcho(WSClient.pack("get_group_member_list", params), code);
 
-        JsonArray response = cache.getCache();
+        JsonArray response = cache.getCache(2000);
 
         if (response != null) {
             for (JsonElement memberEle : response) {
@@ -101,14 +101,14 @@ public class Group implements Contact {
 
         WSClient.botConnection.sendWithEcho(WSClient.pack("get_group_member_info", params), code);
 
-        JsonObject response = cache.getCache();
+        JsonObject response = cache.getCache(600);
 
         return response != null && !response.isJsonNull();
     }
 
     @Override
     public void sendMessage(MessageChain messages) {
-        JsonObject message = messages.serializeToJson();
+        JsonArray message = messages.serializeToJson();
 
         JsonObject params = new JsonObject();
         params.addProperty("group_id", this.id);
