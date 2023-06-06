@@ -1,0 +1,5 @@
+name: SLBot-Main
+version: '${project.version}'
+main: cn.disy920.slbot.Main
+author: Disy
+api-version: 1.17
