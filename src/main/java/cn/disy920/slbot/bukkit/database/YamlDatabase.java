@@ -206,7 +206,7 @@ public class YamlDatabase implements Database {
             File playerDatabase = new File(QQ_DATA, (QQNumber + ".yml"));
 
             if (!playerDatabase.exists()) {
-                System.out.println(playerDatabase.createNewFile());  // 数据库不存在的时候自动创建一个
+                playerDatabase.createNewFile();  // 数据库不存在的时候自动创建一个
             }
 
             YamlConfiguration playerDatabaseYaml = YamlConfiguration.loadConfiguration(playerDatabase);
@@ -509,12 +509,14 @@ public class YamlDatabase implements Database {
             ErrorPacket bindStatus = addWhiteList(playerID);
 
             if (bindStatus.getError() == BasicError.NONE) {  // 判断添加白名部分是否成功
-                bindStatus = insertID(QQNumber, playerID, owner);
+                bindStatus = insertID(whitelistYaml, QQNumber, playerID, owner);
 
                 if (bindStatus.getError() == BasicError.NONE) {
                     whitelistYaml.set("size", whitelistYaml.getInt("size", 0) + 1);
                 }
             }
+
+            whitelistYaml.save(IDFile);
 
             return bindStatus;
         }
@@ -546,9 +548,9 @@ public class YamlDatabase implements Database {
     }
 
 
-    public synchronized ErrorPacket insertID(long QQNumber, String playerID, long owner) {
+    public synchronized ErrorPacket insertID(YamlConfiguration whitelistYaml, long QQNumber, String playerID, long owner) {
         for (int i = 1; i < Short.MAX_VALUE; i++) {
-            ErrorPacket status = insertID(QQNumber, playerID, i, owner);
+            ErrorPacket status = insertID(whitelistYaml, QQNumber, playerID, i, owner);
             if (!(status == ErrorPacket.ALREADY_USED)) {
                 return status;
             }
@@ -558,11 +560,8 @@ public class YamlDatabase implements Database {
     }
 
 
-    public synchronized ErrorPacket insertID(long QQNumber, String playerID, int slot, long owner) {
+    public synchronized ErrorPacket insertID(YamlConfiguration whitelistYaml, long QQNumber, String playerID, int slot, long owner) {
         try {
-            File IDFile = new File(QQ_DATA, (QQNumber + ".yml"));
-            YamlConfiguration whitelistYaml = YamlConfiguration.loadConfiguration(IDFile);
-
             if (whitelistYaml.getString("Bind_ID." + slot + ".ID") != null) {
                 return ErrorPacket.ALREADY_USED;
             }
@@ -574,7 +573,6 @@ public class YamlDatabase implements Database {
                 whitelistYaml.set("Bind_ID." + slot + ".Owner", owner);
             }
 
-            whitelistYaml.save(IDFile);
 
             return ErrorPacket.NONE;
         }
@@ -755,8 +753,10 @@ public class YamlDatabase implements Database {
                 try {
                     YamlConfiguration whitelistYaml = YamlConfiguration.loadConfiguration(IDFile);
 
-                    if (playerID.equals(whitelistYaml.getString("Bind_ID.slot1.ID")) || playerID.equals(whitelistYaml.getString("Bind_ID.slot2.ID"))) {
-                        return IDFile.getName().replace(".yml", "");
+                    for(int slot = 1; slot < whitelistYaml.getInt("size", 0) + 1; slot++) {
+                        if (playerID.equals(whitelistYaml.getString("Bind_ID." + slot + ".ID"))) {
+                            return IDFile.getName().replace(".yml", "");
+                        }
                     }
                 }
                 catch (Exception e){

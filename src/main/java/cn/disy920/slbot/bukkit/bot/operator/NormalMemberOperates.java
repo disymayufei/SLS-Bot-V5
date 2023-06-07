@@ -20,7 +20,6 @@ import cn.disy920.slbot.error.ErrorPacket;
 import cn.disy920.slbot.render.SimpleImageGenerator;
 import cn.disy920.slbot.utils.GsonFactory;
 import cn.disy920.slbot.utils.LuckRating;
-import cn.disy920.slbot.utils.container.ValueShield;
 import cn.disy920.slbot.utils.system.DateTime;
 import com.google.gson.Gson;
 import org.java_websocket.WebSocket;
