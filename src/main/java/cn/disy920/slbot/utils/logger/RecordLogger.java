@@ -131,7 +131,7 @@ public class RecordLogger extends SimpleLogger implements Logger {
         }
 
         try {
-            Files.writeString(logFile.toPath(), String.format("\n[%s] %s", STANDARD_TIME_FORMAT.format(new Date()), log), StandardOpenOption.APPEND);
+            Files.writeString(logFile.toPath(), String.format("[%s] %s", STANDARD_TIME_FORMAT.format(new Date()), log), StandardOpenOption.APPEND);
         }
         catch (Exception e) {
             this.logger.warning("写入Debug文件时出现错误，以下是错误的堆栈信息: ");

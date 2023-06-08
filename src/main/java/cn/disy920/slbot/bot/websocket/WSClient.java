@@ -1,7 +1,6 @@
 package cn.disy920.slbot.bot.websocket;
 
 import cn.disy920.slbot.bot.Bot;
-import cn.disy920.slbot.bot.bot.OneBot;
 import cn.disy920.slbot.bot.contact.Group;
 import cn.disy920.slbot.bot.contact.GroupMember;
 import cn.disy920.slbot.bot.contact.Member;
@@ -22,10 +21,10 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ServerHandshake;
 
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 
-import static cn.disy920.slbot.Main.LOGGER;
 import static cn.disy920.slbot.Main.RECORDER;
 
 public class WSClient extends WebSocketClient {
@@ -81,7 +80,9 @@ public class WSClient extends WebSocketClient {
 
     @Override
     public void onError(Exception e) {
-        e.printStackTrace();
+        if (!(e instanceof ConnectException) && !(e instanceof InterruptedException)) {
+            e.printStackTrace();
+        }
         autoReconnect();
     }
 

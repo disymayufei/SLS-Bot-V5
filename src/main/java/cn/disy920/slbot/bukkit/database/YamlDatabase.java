@@ -654,6 +654,9 @@ public class YamlDatabase implements Database {
             if (playerID != null) {
                 result.add(playerID);
             }
+            else {
+                i--;
+            }
         }
 
         return result;
@@ -673,9 +676,17 @@ public class YamlDatabase implements Database {
 
         for(int i = 1; i < whitelistYaml.getInt("size", 0) + 1; i++) {
             String playerID = whitelistYaml.getString("Bind_ID." + i + ".ID");
-            long owner = whitelistYaml.getLong("Bind_ID" + i + ".Owner", -1);
+            long owner = whitelistYaml.getLong("Bind_ID." + i + ".Owner", -1);
             if (playerID != null) {
-                result.add(String.format("%s (绑定者: %d)", playerID, owner));
+                if (owner == -1 || owner == QQNumber) {
+                    result.add(playerID);
+                }
+                else {
+                    result.add(String.format("%s (绑定者: %d)", playerID, owner));
+                }
+            }
+            else {
+                i--;
             }
         }
 
@@ -703,12 +714,16 @@ public class YamlDatabase implements Database {
 
                     boolean isOwner = false;
                     for(int slot = 1; slot < whitelistYaml.getInt("size", 0) + 1; slot++) {
-                        if (playerID.equals(whitelistYaml.getString("Bind_ID." + slot + ".ID"))) {
+                        String dataID = whitelistYaml.getString("Bind_ID." + slot + ".ID");
+                        if (playerID.equals(dataID)) {
                             whitelistYaml.set("Bind_ID." + slot + ".ID", null);
                             whitelistYaml.set("Bind_ID." + slot + ".Owner", null);
                             isOwner = true;
                             whitelistYaml.set("size", whitelistYaml.getInt("size", 1) - 1);
                             break;
+                        }
+                        else if (dataID == null) {
+                            slot--;
                         }
                     }
 
@@ -754,8 +769,12 @@ public class YamlDatabase implements Database {
                     YamlConfiguration whitelistYaml = YamlConfiguration.loadConfiguration(IDFile);
 
                     for(int slot = 1; slot < whitelistYaml.getInt("size", 0) + 1; slot++) {
-                        if (playerID.equals(whitelistYaml.getString("Bind_ID." + slot + ".ID"))) {
+                        String dataID = whitelistYaml.getString("Bind_ID." + slot + ".ID");
+                        if (playerID.equals(dataID)) {
                             return IDFile.getName().replace(".yml", "");
+                        }
+                        else if(dataID == null) {
+                            slot--;
                         }
                     }
                 }
