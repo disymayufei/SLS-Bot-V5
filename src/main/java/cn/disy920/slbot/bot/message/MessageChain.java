@@ -44,17 +44,17 @@ public class MessageChain extends ArrayList<Message> {
     @NotNull
     public static MessageChain deserializeFromJson(JsonArray data, int id) {
         MessageChain chain = new MessageChain(id);
-        return deserializeFronJsonArray(data, chain);
+        return deserializeFromJsonArray(data, chain);
     }
 
     @NotNull
     public static MessageChain deserializeFromJson(JsonArray data) {
         MessageChain chain = new MessageChain();
-        return deserializeFronJsonArray(data, chain);
+        return deserializeFromJsonArray(data, chain);
     }
 
     @NotNull
-    private static MessageChain deserializeFronJsonArray(JsonArray data, MessageChain chain) {
+    private static MessageChain deserializeFromJsonArray(JsonArray data, MessageChain chain) {
         if (data == null || data.isJsonNull() || data.size() == 0) {
             return chain;
         }
@@ -73,8 +73,15 @@ public class MessageChain extends ArrayList<Message> {
                     }
 
                     case "at" -> {
-                        long id = Long.parseLong(body.get("qq").getAsString());
-                        chain.add(new At(id));
+                        String target = body.get("qq").getAsString();
+
+                        if ("all".equals(target)) {
+                            chain.add(new At(At.ALL));
+                        }
+                        else {
+                            long id = Long.parseLong(target);
+                            chain.add(new At(id));
+                        }
                     }
 
                     case "face" -> {
