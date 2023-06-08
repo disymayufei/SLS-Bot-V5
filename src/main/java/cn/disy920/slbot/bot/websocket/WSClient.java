@@ -184,7 +184,7 @@ public class WSClient extends WebSocketClient {
 
                 if (noticeType.equals("group_increase")) {  // 群人数增加
                     Group group = new Group(packet.get("group_id").getAsLong());
-                    GroupMember member = group.get(packet.get("user_id").getAsLong());
+                    GroupMember member = GroupMember.getEmptyGroupMember(packet.get("user_id").getAsLong(), group);
 
                     long timeStamp = packet.get("time").getAsLong();
                     long botID = packet.get("self_id").getAsLong();

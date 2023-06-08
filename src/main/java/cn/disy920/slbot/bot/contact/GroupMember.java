@@ -27,6 +27,10 @@ public class GroupMember extends Member {
         this.stranger = new Stranger(this.group, this.nickName, this.id);
     }
 
+    public static GroupMember getEmptyGroupMember(long id, Group group) {
+        return new GroupMember(id, group, Member.getNameCardOrNick(id), "", 0, Sex.UNKNOWN, "0", Role.MEMBER, "");
+    }
+
     public String getLevel() {
         return this.level;
     }
