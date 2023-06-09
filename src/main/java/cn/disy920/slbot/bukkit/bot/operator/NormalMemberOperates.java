@@ -157,7 +157,7 @@ public class NormalMemberOperates {
                 }
             }
 
-            if (YamlDatabase.INSTANCE.getBindNum(senderID) > 2) {
+            if (YamlDatabase.INSTANCE.getBindNum(senderID) < 2) {
                 String playerID = groupMes.substring(6);
                 if (playerID.length() < 3 || playerID.length() > 20) {
                     event.getGroup().sendMessage(new MessageChainBuilder()

@@ -534,7 +534,7 @@ public class YamlDatabase implements Database {
         try {
             if (!IDFile.exists()) {
                 if (!IDFile.createNewFile()) {
-                    return -1;
+                    return 0;
                 }
             }
 
