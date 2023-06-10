@@ -348,12 +348,12 @@ public class AdminOperates {
 
         String playerID = msg.substring(6);
         String QQID = YamlDatabase.INSTANCE.findQQByID(playerID);
-        long qq_number;
+        long QQNumber;
 
         if(QQID != null){
             try {
-                qq_number = Long.parseLong(QQID);
-                if(event.getGroup().contains(qq_number)){
+                QQNumber = Long.parseLong(QQID);
+                if(event.getGroup().contains(QQNumber)){
                     event.getGroup().sendMessage(new MessageChainBuilder()
                             .append(new At(senderID))
                             .append(" ID：")
@@ -361,7 +361,7 @@ public class AdminOperates {
                             .append("绑定的QQ号为：")
                             .append(QQID)
                             .append("，对应群员为：")
-                            .append(new At(qq_number))
+                            .append(new At(QQNumber))
                             .build()
                     );
 
