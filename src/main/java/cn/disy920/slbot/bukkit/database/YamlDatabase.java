@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static cn.disy920.slbot.Main.LOGGER;
@@ -771,10 +772,11 @@ public class YamlDatabase implements Database {
                     for(int slot = 1; slot < whitelistYaml.getInt("size", 0) + 1; slot++) {
                         String dataID = whitelistYaml.getString("Bind_ID." + slot + ".ID");
                         String uuid = whitelistYaml.getString("Bind_ID." + slot + ".UUID");
+
                         if (playerID.equals(dataID)) {
                             return IDFile.getName().replace(".yml", "");
                         }
-                        else if(dataID == null && uuid != null) {
+                        else if(dataID == null && uuid == null) {
                             slot--;
                         }
                     }
