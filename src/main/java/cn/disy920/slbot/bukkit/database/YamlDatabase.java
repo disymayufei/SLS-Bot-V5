@@ -776,7 +776,7 @@ public class YamlDatabase implements Database {
                         if (playerID.equals(dataID)) {
                             return IDFile.getName().replace(".yml", "");
                         }
-                        else if(dataID == null && uuid == null) {
+                        else if(uuid == null) {
                             slot--;
                         }
                     }
