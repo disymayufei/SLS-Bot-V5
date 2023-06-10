@@ -785,6 +785,11 @@ public class Face implements Message {
 
     @Override
     public @NotNull String contentToString() {
-        return names[this.id];
+        if (this.id < names.length) {
+            return names[this.id];
+        }
+        else {
+            return "[表情:" + this.id + "]";
+        }
     }
 }
