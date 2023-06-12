@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static cn.disy920.slbot.Main.LOGGER;
 import static cn.disy920.slbot.Main.PLUGIN_INSTANCE;
@@ -453,25 +454,29 @@ public class YamlDatabase implements Database {
             File[] personalDataFiles = QQ_DATA.listFiles();
 
             YamlConfiguration whitelistYaml = YamlConfiguration.loadConfiguration(WHITELIST);
-            List<String> rawWhitelistIDList = whitelistYaml.getStringList("WhiteList");
-            List<String> finalWhitelistIDList = new ArrayList<>();
+            final List<String> finalWhitelistIDList = new ArrayList<>();
 
             if(personalDataFiles != null){
                 for(File f : personalDataFiles){
                     if(f.isFile()){
                         if(f.getName().contains(".yml")){
                             YamlConfiguration personDataYaml = YamlConfiguration.loadConfiguration(f);
-                            List<String> personalIDList = personDataYaml.getStringList("Bind_ID");
+                            int i = 1;
+                            for(int slot = 1; slot < personDataYaml.getInt("size", 0) + 1; slot++) {
+                                String name = personDataYaml.getString("Bind_ID." + i + ".ID");
 
-                            rawWhitelistIDList.addAll(personalIDList);
+                                if (!finalWhitelistIDList.contains(name) && name != null) {
+                                    finalWhitelistIDList.add(name);
+                                }
+
+                                if (name == null) {
+                                    slot--;
+                                }
+
+                                i++;
+                            }
                         }
                     }
-                }
-            }
-
-            for(String playerID : rawWhitelistIDList){
-                if(!finalWhitelistIDList.contains(playerID)){
-                    finalWhitelistIDList.add(playerID);
                 }
             }
 
@@ -604,14 +609,22 @@ public class YamlDatabase implements Database {
             YamlConfiguration whitelistYaml = YamlConfiguration.loadConfiguration(IDFile);
 
             boolean isOwner = false;
+
+            int i = 1;
             for(int slot = 1; slot < whitelistYaml.getInt("size", 0) + 1; slot++) {
-                if (playerID.equals(whitelistYaml.getString("Bind_ID." + slot + ".ID"))) {
-                    whitelistYaml.set("Bind_ID." + slot + ".ID", null);
-                    whitelistYaml.set("Bind_ID." + slot + ".Owner", null);
+                String name = whitelistYaml.getString("Bind_ID." + i + ".ID");
+                if (playerID.equals(name)) {
+                    whitelistYaml.set("Bind_ID." + i + ".ID", null);
+                    whitelistYaml.set("Bind_ID." + i + ".Owner", null);
                     isOwner = true;
                     whitelistYaml.set("size", whitelistYaml.getInt("size", 1) - 1);
                     break;
                 }
+                else if(name == null) {
+                    slot--;
+                }
+
+                i++;
             }
 
             if (!isOwner) {
@@ -650,14 +663,17 @@ public class YamlDatabase implements Database {
 
         YamlConfiguration whitelistYaml = YamlConfiguration.loadConfiguration(IDFile);
 
-        for(int i = 1; i < whitelistYaml.getInt("size", 0) + 1; i++) {
+        int i = 1;
+        for (int slot = 1; slot < whitelistYaml.getInt("size", 0) + 1; slot++) {
             String playerID = whitelistYaml.getString("Bind_ID." + i + ".ID");
             if (playerID != null) {
                 result.add(playerID);
             }
             else {
-                i--;
+                slot--;
             }
+
+            i++;
         }
 
         return result;
@@ -675,7 +691,8 @@ public class YamlDatabase implements Database {
 
         YamlConfiguration whitelistYaml = YamlConfiguration.loadConfiguration(IDFile);
 
-        for(int i = 1; i < whitelistYaml.getInt("size", 0) + 1; i++) {
+        int i = 1;
+        for (int slot = 1; slot < whitelistYaml.getInt("size", 0) + 1; slot++) {
             String playerID = whitelistYaml.getString("Bind_ID." + i + ".ID");
             long owner = whitelistYaml.getLong("Bind_ID." + i + ".Owner", -1);
             if (playerID != null) {
@@ -687,8 +704,10 @@ public class YamlDatabase implements Database {
                 }
             }
             else {
-                i--;
+                slot--;
             }
+
+            i++;
         }
 
         return result;
@@ -714,11 +733,12 @@ public class YamlDatabase implements Database {
                     YamlConfiguration whitelistYaml = YamlConfiguration.loadConfiguration(IDFile);
 
                     boolean isOwner = false;
+                    int i = 1;
                     for(int slot = 1; slot < whitelistYaml.getInt("size", 0) + 1; slot++) {
-                        String dataID = whitelistYaml.getString("Bind_ID." + slot + ".ID");
+                        String dataID = whitelistYaml.getString("Bind_ID." + i + ".ID");
                         if (playerID.equals(dataID)) {
-                            whitelistYaml.set("Bind_ID." + slot + ".ID", null);
-                            whitelistYaml.set("Bind_ID." + slot + ".Owner", null);
+                            whitelistYaml.set("Bind_ID." + i + ".ID", null);
+                            whitelistYaml.set("Bind_ID." + i + ".Owner", null);
                             isOwner = true;
                             whitelistYaml.set("size", whitelistYaml.getInt("size", 1) - 1);
                             break;
@@ -726,6 +746,8 @@ public class YamlDatabase implements Database {
                         else if (dataID == null) {
                             slot--;
                         }
+
+                        i++;
                     }
 
                     if (!isOwner) {
@@ -760,29 +782,71 @@ public class YamlDatabase implements Database {
     public synchronized String findQQByID(String playerID){
         File[] IDFilesArray = QQ_DATA.listFiles();
 
-        if(IDFilesArray == null){
+        if (IDFilesArray == null){
             return null;
         }
 
-        for(File IDFile : IDFilesArray){
-            if(IDFile.isFile()){
+        for (File IDFile : IDFilesArray){
+            if (IDFile.isFile()){
                 try {
                     YamlConfiguration whitelistYaml = YamlConfiguration.loadConfiguration(IDFile);
 
-                    for(int slot = 1; slot < whitelistYaml.getInt("size", 0) + 1; slot++) {
-                        String dataID = whitelistYaml.getString("Bind_ID." + slot + ".ID");
-                        String uuid = whitelistYaml.getString("Bind_ID." + slot + ".UUID");
+                    int i = 1;
+                    for (int slot = 1; slot < whitelistYaml.getInt("size", 0) + 1; slot++) {
+                        String dataID = whitelistYaml.getString("Bind_ID." + i + ".ID");
 
                         if (playerID.equals(dataID)) {
                             return IDFile.getName().replace(".yml", "");
                         }
-                        else if(uuid == null) {
+                        else if (dataID == null) {
                             slot--;
                         }
+
+                        i++;
                     }
                 }
                 catch (Exception e){
                     LOGGER.error("查找ID：" + playerID + "时出错！以下是错误的堆栈信息：");
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+        }
+
+        return null;
+    }
+
+
+    @Nullable
+    public synchronized String getUUIDByID(String playerID) {
+        File[] IDFilesArray = QQ_DATA.listFiles();
+
+        if (IDFilesArray == null){
+            return null;
+        }
+
+        for (File IDFile : IDFilesArray){
+            if (IDFile.isFile()){
+                try {
+                    YamlConfiguration whitelistYaml = YamlConfiguration.loadConfiguration(IDFile);
+
+                    int i = 1;
+                    for (int slot = 1; slot < whitelistYaml.getInt("size", 0) + 1; slot++) {
+                        String dataID = whitelistYaml.getString("Bind_ID." + i + ".ID");
+                        String uuid = whitelistYaml.getString("Bind_ID." + i + ".UUID");
+
+                        if (playerID.equals(dataID)) {
+                            return uuid;
+                        }
+                        else if (dataID == null) {
+                            slot--;
+                        }
+
+                        i++;
+                    }
+                }
+                catch (Exception e){
+                    LOGGER.error("查找UUID：" + playerID + "时出错！以下是错误的堆栈信息：");
                     e.printStackTrace();
                     return null;
                 }

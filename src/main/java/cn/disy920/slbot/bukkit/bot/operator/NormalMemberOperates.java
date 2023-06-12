@@ -343,8 +343,13 @@ public class NormalMemberOperates {
             MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
             messageChainBuilder.append(new At(senderID)).append("嘛？你绑定了以下ID哦：");
 
-            for(String playerID : playerIDList){
-                messageChainBuilder.append("\n").append(playerID);
+            for (int i = 0; i < playerIDList.size(); i++) {
+                String playerID = playerIDList.get(i);
+                messageChainBuilder
+                        .append("\n槽位")
+                        .append(i)
+                        .append(": ")
+                        .append(playerID);
             }
 
             event.getGroup().sendMessage(messageChainBuilder.build());

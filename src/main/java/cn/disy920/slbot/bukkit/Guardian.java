@@ -1,6 +1,8 @@
 package cn.disy920.slbot.bukkit;
 
 import cn.disy920.slbot.bukkit.database.YamlDatabase;
+import fr.xephi.authme.api.v3.AuthMeApi;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -27,11 +29,13 @@ public class Guardian {
     }
 
     /* 请注意，该方法仅对AuthMe有效 */
-    public static void noPasswordLogin(String playerName){
+    public static void noPasswordLogin(Player player){
         new BukkitRunnable(){
             @Override
             public void run() {
-                PLUGIN_INSTANCE.getServer().dispatchCommand(PLUGIN_INSTANCE.getServer().getConsoleSender(), "authme forcelogin " + playerName);
+                if (Bukkit.getPluginManager().getPlugin("AuthMe") != null) {
+                    AuthMeApi.getInstance().forceLogin(player);
+                }
             }
         }.runTaskLater(PLUGIN_INSTANCE, 20);
     }

@@ -20,7 +20,7 @@ public class OnPlayerJoin implements Listener {
             String playerName = event.getPlayer().getName();
 
             if(YamlDatabase.INSTANCE.isOnlineMode(playerName)){
-                Guardian.noPasswordLogin(playerName);
+                Guardian.noPasswordLogin(event.getPlayer());
                 event.getPlayer().sendMessage("[" + serverName + "§6小管家§r] §a§l正版验证成功，亲爱的正版玩家§6" + playerName + "§a欢迎回来！");
                 return;
             }
@@ -34,13 +34,13 @@ public class OnPlayerJoin implements Listener {
                     }
 
                     if ("".equals(YamlDatabase.INSTANCE.getPlayerIP(playerName))) {  // 数据库中没有IP信息
-                        Guardian.noPasswordLogin(playerName);
+                        Guardian.noPasswordLogin(event.getPlayer());
                         YamlDatabase.INSTANCE.setPlayerIP(playerName, event.getPlayer().getAddress().getHostName());
                         event.getPlayer().sendMessage("[" + serverName + "§6小管家§r] §a§lIP已成功记录，后续同IP均可在时限内免密登录！");
                     } else {
 
                         if (event.getPlayer().getAddress().getHostName().equals(YamlDatabase.INSTANCE.getPlayerIP(playerName))){  // 比对IP一致
-                            Guardian.noPasswordLogin(playerName);
+                            Guardian.noPasswordLogin(event.getPlayer());
                             event.getPlayer().sendMessage("[" + serverName + "§6小管家§r] §a§l免密登录成功，欢迎回来！");
 
                         }

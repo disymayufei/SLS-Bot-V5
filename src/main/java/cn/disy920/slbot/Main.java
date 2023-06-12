@@ -32,6 +32,8 @@ public final class Main extends JavaPlugin {
 
     public static final String pluginVersion = "5.0.0";
 
+    public static String ACCESS_TOKEN = null;
+
     public static String serverName = "";
     public static RichImageGenerator richImageGenerator = null;
 
@@ -75,7 +77,7 @@ public final class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new OnPlayerJoin(), this);
         Bukkit.getPluginManager().registerEvents(new OnChat(), this);
 
-        LOGGER.info("插件已加载，版本V" + pluginVersion);
+        LOGGER.info("SLS Bot插件已加载，版本V" + pluginVersion);
         LOGGER.info("Bot准备加载！");
     }
 
@@ -117,8 +119,12 @@ public final class Main extends JavaPlugin {
 
         /* 初始化安全密钥 */
         if(this.getConfig().getString("Announce_Token") == null){
-            this.getConfig().set("Announce_Token", PasswordGenerator.gen(32));
+            ACCESS_TOKEN = PasswordGenerator.gen(32);
+            this.getConfig().set("Announce_Token", ACCESS_TOKEN);
             saveConfig();
+        }
+        else {
+            ACCESS_TOKEN = this.getConfig().getString("Announce_Token");
         }
     }
 

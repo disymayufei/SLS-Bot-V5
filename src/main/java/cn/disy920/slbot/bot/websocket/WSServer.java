@@ -11,7 +11,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -138,6 +137,7 @@ public class WSServer extends WebSocketServer {
         JsonArray groupArray = receiveObj.getAsJsonArray("reqGroup");
 
         if(packetHeader != null){
+
             switch (packetHeader) {
                 case "helloHandshake" -> {
                     String identity = receiveObj.get("args").getAsString();
@@ -356,7 +356,17 @@ public class WSServer extends WebSocketServer {
                 case "chatBridge" -> announceToAllClient(msg, conn);
 
                 case "getUUID" -> {
+                    String playerID = receiveObj.get("args").getAsString();
 
+                    Map<String, Object> sendPacket = new HashMap<>();
+                    sendPacket.put("type", "UUID");
+
+                    Map<String, String> params = new HashMap<>();
+                    params.put("ID", playerID);
+                    params.put("UUID", YamlDatabase.INSTANCE.getUUIDByID(playerID));
+
+                    sendPacket.put("args", params);
+                    conn.send(GsonFactory.getGsonInstance().toJson(sendPacket));
                 }
             }
         }
