@@ -347,7 +347,7 @@ public class NormalMemberOperates {
                 String playerID = playerIDList.get(i);
                 messageChainBuilder
                         .append("\n槽位")
-                        .append(i)
+                        .append(i + 1)
                         .append(": ")
                         .append(playerID);
             }
