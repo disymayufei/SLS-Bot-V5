@@ -33,6 +33,8 @@ public class WSServer extends WebSocketServer {
 
     public static Map<String, WebSocket> connectionMap = new ConcurrentHashMap<>(16);
 
+    private final List<WebSocket> connectionPool = Collections.synchronizedList(new ArrayList<>(128));
+
     private final List<String> CHECK_SERVER_EXTRA_MSG = Arrays.asList(
             "知道我们还有开黑啦（kook）嘛？可以开麦的哦！传送门：https://kaihei.co/DN8K5U",
             "想让其他玩家更快了解你嘛？来这里来这里：https://sls.wiki/index.php?title=SLS%E6%B4%BB%E8%B7%83%E7%8E%A9%E5%AE%B6",
@@ -72,6 +74,7 @@ public class WSServer extends WebSocketServer {
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshakeData) {
         LOGGER.debug("检测到新连接：" + handshakeData.getResourceDescriptor());
+        connectionPool.add(conn);
     }
 
     @Override
@@ -83,6 +86,7 @@ public class WSServer extends WebSocketServer {
                 break;
             }
         }
+        connectionPool.remove(conn);
     }
 
     @Override
@@ -95,6 +99,7 @@ public class WSServer extends WebSocketServer {
                 break;
             }
         }
+        connectionPool.remove(conn);
     }
 
     @Override
@@ -127,7 +132,7 @@ public class WSServer extends WebSocketServer {
          *   - commandOutput: 代表服务器在执行命令后的输出，args为一个map（{"command": cmd, "message": msg}），cmd为一String，表示执行的命令内容;msg为一String表示控制台的输出内容
          *   - changeExamStatus: 代表要修改某玩家的审核状态，args为一个Map（{"QQNum": num, "passed": isPassed, "token": token}），num为一Number，表示玩家的QQ号，isPassed为一boolean，表示玩家是否过审，token为校验用的密码，返回过审信息。
          *   - chat: 代表某服务器的聊天信息，args为一个Map（{"identity": serverIdentity, "text": chatText}），serverIdentity为一String，表示服务器的身份（会展示在聊天内容的开头），chatText为一String，表示聊天的内容
-         *   - chatBridge: 代表需要在子服之间跨服传送的消息，args为一个Map（{"identity": serverIdentity, "sender": sender, "text": chatText}），serverIdentity为一String，表示服务器的身份（会展示在聊天内容的开头），sender为一String，表示消息的发出者，chatText为一String，表示聊天的内容
+         *   - chatBridge: 代表需要在子服之间跨服传送的消息，args为一个Map（{""s"": serverIdentity, "sender": sender, "text": chatText}），serverIdentity为一String，表示服务器的身份（会展示在聊天内容的开头），sender为一String，表示消息的发出者，chatText为一String，表示聊天的内容
          *   - getUUID: 获取某ID玩家的UUID，args为一个String，包含该玩家的ID，返回一个包含该玩家UUID值的String
          */
 
@@ -452,9 +457,7 @@ public class WSServer extends WebSocketServer {
     }
 
     private void announceToAllClient(String packet, WebSocket own) {
-        for (Map.Entry<String, WebSocket> entry : connectionMap.entrySet()) {
-            WebSocket conn = entry.getValue();
-
+        for (WebSocket conn : connectionPool) {
             if (!conn.equals(own)) {
                 conn.send(packet);
             }

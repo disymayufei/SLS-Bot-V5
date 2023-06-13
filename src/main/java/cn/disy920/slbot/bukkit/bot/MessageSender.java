@@ -23,7 +23,7 @@ public class MessageSender {
                     infoBuilder.append(onlinePlayers.get(i).getAsString());
                 }
 
-                int imageHeight = 900 + 40 * (onlinePlayers.size() + 1);
+                int imageHeight = 900 + 48 * (onlinePlayers.size() + 1);
 
                 InputStream queryServerImage = richImageGenerator.genQueryServerImage(onlinePlayers.size(), Calendar.getInstance().get(Calendar.YEAR), imageHeight, infoBuilder.toString(), 1);
 
@@ -52,7 +52,7 @@ public class MessageSender {
         if (tryImage) {
             if (richImageGenerator != null) {
 
-                int imageHeight = 900 + 40 * (text.split("\n").length);
+                int imageHeight = 900 + 48 * (text.split("\n").length);
                 InputStream queryServerImage = richImageGenerator.genQueryServerImage(currentPlayerNum, Calendar.getInstance().get(Calendar.YEAR), imageHeight, text, theme);
 
                 if (queryServerImage != null) {
