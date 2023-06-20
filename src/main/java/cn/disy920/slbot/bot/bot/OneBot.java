@@ -169,9 +169,12 @@ public class OneBot implements RunnableBot{
                 .addCommand(
                         normalCommandTreeBuilder.createNode("内服喊话")
                                 .require(event -> PLUGIN_INSTANCE.getConfig().getLongList("Internal_Server_Group").contains(event.getGroup().getID()))  // 仅限内服执行
-                                .setCaseInsensitive(true)
                                 .needArgs(true)
                                 .executes(NormalMemberOperates::shoutInServer)
+                )
+                .addCommand(
+                        normalCommandTreeBuilder.createNode("交换槽位")
+                                .executes(NormalMemberOperates::exchangeSlot)
                 )
                 .register();
 

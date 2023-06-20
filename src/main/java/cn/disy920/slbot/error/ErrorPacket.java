@@ -35,6 +35,6 @@ public class ErrorPacket {
 
     @Override
     public String toString(){
-        return error.getInfo() + (extraMsg == null ? "" : extraMsg);
+        return error.getInfo() + (extraMsg == null ? "" : "，" + extraMsg);
     }
 }

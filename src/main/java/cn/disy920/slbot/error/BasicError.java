@@ -16,11 +16,12 @@ public enum BasicError implements Error {
     FULL("绑定的ID数超出限制，无法再绑定ID", 110),
     ALREADY_USED("该槽位已被使用，请尝试换一个", 111),
     BIND_ERROR("绑定ID出错，请联系腐竹查看后台错误信息！", 190),
+    EXCHANGE_ERROR("交换槽位时出现错误，请联系腐竹查看后台错误信息！", 191),
 
     /* 删除ID部分 */
     NOT_EXISTED("这个ID并没有被任何人绑定过哦！", 200),
     NOT_OWNER("这个ID不是你绑定的，因此无法删除！", 201),
-    NEVER_BIND("你还没绑定过任何ID诶，这让我怎么删除呢？", 202),
+    NEVER_BIND("你还没绑定过任何ID诶，这让我怎么处理呢？", 202),
     CANCEL_BIND_ERROR("取消绑定ID出错，请联系腐竹查看后台错误信息！", 290),
     CLEAR_ERROR("清除个人信息出错，请联系腐竹查看后台错误信息！", 291),
 

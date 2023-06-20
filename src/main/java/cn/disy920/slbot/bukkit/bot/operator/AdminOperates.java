@@ -5,10 +5,7 @@ import cn.disy920.slbot.bot.command.Command;
 import cn.disy920.slbot.bot.contact.Group;
 import cn.disy920.slbot.bot.contact.GroupMember;
 import cn.disy920.slbot.bot.event.GroupMessageEvent;
-import cn.disy920.slbot.bot.message.At;
-import cn.disy920.slbot.bot.message.Image;
-import cn.disy920.slbot.bot.message.Message;
-import cn.disy920.slbot.bot.message.MessageChainBuilder;
+import cn.disy920.slbot.bot.message.*;
 import cn.disy920.slbot.bukkit.database.YamlDatabase;
 import cn.disy920.slbot.error.BasicError;
 import cn.disy920.slbot.error.ErrorPacket;
@@ -17,6 +14,7 @@ import cn.disy920.slbot.utils.UUIDTool;
 import cn.disy920.slbot.utils.container.Pair;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -440,6 +438,40 @@ public class AdminOperates {
                 .append("没有绑定过任何ID哦！")
                 .build()
         );
+
+        return Command.SUCCESS;
+    }
+
+    public static boolean exchangeSlot(GroupMessageEvent event) {
+        long senderID = event.getSender().getID();
+        String message = event.getMessage().contentToString();
+
+        int[] slots = new int[2];
+
+        try {
+            String[] slotsStrArray = message.split(" ");
+            for (int i = 0; i < slotsStrArray.length ; i++) {
+                slots[i] = Integer.parseInt(slotsStrArray[i]);
+            }
+        }
+        catch (NumberFormatException e) {
+            event.getGroup().sendMessage(new MessageChainBuilder()
+                    .append(new At(senderID))
+                    .append(" 你输入的槽位数真的是个合法数字嘛？")
+                    .build()
+            );
+
+            return Command.SUCCESS;
+        }
+
+        ErrorPacket status = YamlDatabase.INSTANCE.exchangeSlot(senderID, slots[0], slots[1]);
+
+        if (status.getError() == BasicError.NONE) {
+            event.getGroup().sendMessage("槽位交换完成，槽位" + slots[0] + "与槽位" + slots[1] + "的ID目前已成功互换！");
+        }
+        else {
+            event.getGroup().sendMessage(status.toString());
+        }
 
         return Command.SUCCESS;
     }

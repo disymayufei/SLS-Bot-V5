@@ -6,6 +6,7 @@ import cn.disy920.slbot.error.CustomizeError;
 import cn.disy920.slbot.error.ErrorPacket;
 import cn.disy920.slbot.utils.UUIDTool;
 import cn.disy920.slbot.utils.system.OSChecker;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -164,7 +165,7 @@ public class YamlDatabase implements Database {
      */
     @Override
     @NotNull
-    public List<String> getWhiteList() {
+    public synchronized List<String> getWhiteList() {
         YamlConfiguration whitelistYaml = YamlConfiguration.loadConfiguration(WHITELIST);
         return whitelistYaml.getStringList("WhiteList");
     }
@@ -176,7 +177,7 @@ public class YamlDatabase implements Database {
      * @return 一个boolean值，表示玩家是否通过了审核
      */
     @Override
-    public boolean hadPassedTheExam(long QQNumber) {
+    public synchronized boolean hadPassedTheExam(long QQNumber) {
         try {
             File playerDatabase = new File(QQ_DATA, (QQNumber + ".yml"));
 
@@ -203,7 +204,7 @@ public class YamlDatabase implements Database {
      */
     @Override
     @NotNull
-    public ErrorPacket passExam(long QQNumber) {
+    public synchronized ErrorPacket passExam(long QQNumber) {
         try {
             File playerDatabase = new File(QQ_DATA, (QQNumber + ".yml"));
 
@@ -232,13 +233,85 @@ public class YamlDatabase implements Database {
 
 
     /**
+     * 获取某玩家绑定槽位的容量（即最大槽位数）
+     * @param QQNumber 玩家QQ号
+     * @return 绑定槽位的容量
+     */
+    public synchronized int getCapacity(long QQNumber) {
+        File playerDatabase = new File(QQ_DATA, (QQNumber + ".yml"));
+
+        if (!playerDatabase.exists()) {
+            return 0;
+        }
+
+        YamlConfiguration playerDatabaseYaml = YamlConfiguration.loadConfiguration(playerDatabase);
+        ConfigurationSection idSlots = playerDatabaseYaml.getConfigurationSection("Bind_ID");
+
+        if (idSlots == null) {
+            return 0;
+        }
+
+        int i = 1;
+        while (idSlots.get(String.valueOf(i)) != null) {
+            i++;
+        }
+
+        return i - 1;
+    }
+
+
+    /**
+     * 为玩家绑定的ID交换前两个槽位的方法
+     * @param QQNumber 玩家的QQ号
+     * @return 错误信息包，包含错误信息
+     */
+    @NotNull
+    public synchronized ErrorPacket exchangeSlot(long QQNumber) {
+        return exchangeSlot(QQNumber, 0, 1);
+    }
+
+    @NotNull
+    public synchronized ErrorPacket exchangeSlot(long QQNumber, int fromSlot, int toSlot) {
+        File playerDatabase = new File(QQ_DATA, (QQNumber + ".yml"));
+
+        try {
+            if (!playerDatabase.exists()) {
+                return ErrorPacket.create(BasicError.NEVER_BIND, null);
+            }
+
+            int capacity = getCapacity(QQNumber);
+            if (fromSlot > capacity || toSlot > capacity) {
+                return ErrorPacket.create(new CustomizeError("槽位数超过了最大限制哦！", 193), null);
+            }
+
+            YamlConfiguration playerDatabaseYaml = YamlConfiguration.loadConfiguration(playerDatabase);
+
+            ConfigurationSection fromSection = playerDatabaseYaml.getConfigurationSection("Bind_ID." + fromSlot);
+            ConfigurationSection toSection = playerDatabaseYaml.getConfigurationSection("Bind_ID." + toSlot);
+
+            playerDatabaseYaml.set("Bind_ID." + toSlot, fromSection);
+            playerDatabaseYaml.set("Bind_ID." + fromSlot, toSection);
+
+            playerDatabaseYaml.save(playerDatabase);
+
+            return ErrorPacket.create(BasicError.NONE, null);
+        }
+        catch (Exception e) {
+            LOGGER.error("交换" + QQNumber + "的槽位" + (fromSlot + 1) + "和槽位" + (toSlot + 1) + "时出错！以下是错误的堆栈信息：");
+            e.printStackTrace();
+            return ErrorPacket.create(BasicError.EXCHANGE_ERROR, null);
+        }
+    }
+
+
+    /**
      * 将某玩家纳入未过审的列表
      * @param QQNumber 玩家的QQ号
      * @return 错误信息包，包含错误信息
      */
     @Override
     @NotNull
-    public ErrorPacket denyExam(long QQNumber) {
+    public synchronized ErrorPacket denyExam(long QQNumber) {
         try {
             File denyListFile = new File(OTHER_DATA, "DenyList.yml");
 
@@ -324,7 +397,7 @@ public class YamlDatabase implements Database {
      */
     @Override
     @NotNull
-    public ErrorPacket withdrawExam(long QQNumber) {
+    public synchronized ErrorPacket withdrawExam(long QQNumber) {
         try {
             File playerDatabase = new File(QQ_DATA, (QQNumber + ".yml"));
 

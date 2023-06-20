@@ -785,6 +785,22 @@ public class NormalMemberOperates {
         return Command.SUCCESS;
     }
 
+
+    public static boolean exchangeSlot(GroupMessageEvent event) {
+        long senderID = event.getSender().getID();
+
+        ErrorPacket status = YamlDatabase.INSTANCE.exchangeSlot(senderID);
+
+        if (status.getError() == BasicError.NONE) {
+            event.getGroup().sendMessage("槽位交换完成，槽位1与槽位2的ID目前已成功互换！");
+        }
+        else {
+            event.getGroup().sendMessage(status.toString());
+        }
+
+        return Command.SUCCESS;
+    }
+
     /**
      * 检查进入主群的时候是否通过审核
      * @param event 申请入群事件
