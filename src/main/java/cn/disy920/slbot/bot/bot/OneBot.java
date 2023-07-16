@@ -174,6 +174,7 @@ public class OneBot implements RunnableBot{
                 )
                 .addCommand(
                         normalCommandTreeBuilder.createNode("交换槽位")
+                                .alias("切换槽位")
                                 .executes(NormalMemberOperates::exchangeSlot)
                 )
                 .register();
@@ -248,6 +249,12 @@ public class OneBot implements RunnableBot{
                                 .needArgs(true)
                                 .setCaseInsensitive(true)
                                 .executes(AdminOperates::findIDsByQQ)
+                )
+                .addCommand(
+                        adminCommandTreeBuilder.createNode("交换槽位")
+                                .alias("切换槽位")
+                                .needArgs(true)
+                                .executes(AdminOperates::exchangeSlot)
                 )
                 .register();
 

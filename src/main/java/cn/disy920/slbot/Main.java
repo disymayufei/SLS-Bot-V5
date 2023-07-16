@@ -30,7 +30,7 @@ public final class Main extends JavaPlugin {
     public static Thread WSS_THREAD = null;
     public static Thread INTERNAL_CHECK_TIMER_THREAD = null;
 
-    public static final String pluginVersion = "5.0.0";
+    public static final String pluginVersion = "5.1.1";
 
     public static String ACCESS_TOKEN = null;
 

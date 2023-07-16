@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.disy920</groupId>
-    <artifactId>slbot</artifactId>
-    <version>5.0.0</version>
+    <artifactId>SLBot-Main</artifactId>
+    <version>5.1.1</version>
     <packaging>jar</packaging>
 
     <name>SLBot V5-Main</name>
@@ -53,6 +53,10 @@
     </build>
 
     <repositories>
+        <repository>
+            <id>aliyunMaven</id>
+            <url>https://maven.aliyun.com/repository/public</url>
+        </repository>
         <repository>
             <id>codemc-repo</id>
             <url>https://repo.codemc.org/repository/maven-public/</url>

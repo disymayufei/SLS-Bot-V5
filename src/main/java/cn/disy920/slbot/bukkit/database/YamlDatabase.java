@@ -5,6 +5,7 @@ import cn.disy920.slbot.error.BasicError;
 import cn.disy920.slbot.error.CustomizeError;
 import cn.disy920.slbot.error.ErrorPacket;
 import cn.disy920.slbot.utils.UUIDTool;
+import cn.disy920.slbot.utils.container.ValueShield;
 import cn.disy920.slbot.utils.system.OSChecker;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -267,7 +268,7 @@ public class YamlDatabase implements Database {
      */
     @NotNull
     public synchronized ErrorPacket exchangeSlot(long QQNumber) {
-        return exchangeSlot(QQNumber, 0, 1);
+        return exchangeSlot(QQNumber, 1, 2);
     }
 
     @NotNull
@@ -286,8 +287,14 @@ public class YamlDatabase implements Database {
 
             YamlConfiguration playerDatabaseYaml = YamlConfiguration.loadConfiguration(playerDatabase);
 
-            ConfigurationSection fromSection = playerDatabaseYaml.getConfigurationSection("Bind_ID." + fromSlot);
-            ConfigurationSection toSection = playerDatabaseYaml.getConfigurationSection("Bind_ID." + toSlot);
+            ConfigurationSection fromSection = new ValueShield<ConfigurationSection, ConfigurationSection>(playerDatabaseYaml.getConfigurationSection("Bind_ID." + fromSlot)).runOrReturn(section -> section, playerDatabaseYaml.createSection("Bind_ID." + fromSlot));
+            ConfigurationSection toSection = new ValueShield<ConfigurationSection, ConfigurationSection>(playerDatabaseYaml.getConfigurationSection("Bind_ID." + toSlot)).runOrReturn(section -> section, playerDatabaseYaml.createSection("Bind_ID." + toSlot));
+
+            String fromUUID = new ValueShield<String, String>(fromSection.getString("UUID")).runOrReturn(uuid -> uuid, UUIDTool.getStarLightUUID(QQNumber, fromSlot).toString());
+            String toUUID = new ValueShield<String, String>(toSection.getString("UUID")).runOrReturn(uuid -> uuid, UUIDTool.getStarLightUUID(QQNumber, toSlot).toString());
+
+            fromSection.set("UUID", toUUID);
+            toSection.set("UUID", fromUUID);
 
             playerDatabaseYaml.set("Bind_ID." + toSlot, fromSection);
             playerDatabaseYaml.set("Bind_ID." + fromSlot, toSection);

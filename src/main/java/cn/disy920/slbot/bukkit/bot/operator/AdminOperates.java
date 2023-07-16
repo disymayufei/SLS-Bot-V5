@@ -129,9 +129,9 @@ public class AdminOperates {
                                         .build()
                         );
 
-                        // TODO: 可变的审核提示语
-                        newPlayer.sendMessage("[StarLight - Bot] 你已经通过审核了，快点击这个链接加入我们的服务器交流群吧：\"https://jq.qq.com/?_wv=1027&k=BwfeiIBU\"");
-                        newPlayer.sendMessage(new Image(SimpleImageGenerator.gen("[StarLight - Bot] 你已经通过审核了，如果你无法扫码，那就试试手动在浏览器里输入这个链接加群吧：\"https://jq.qq.com/?_wv=1027&k=BwfeiIBU\"", 30)));
+                        String passedMessage = PLUGIN_INSTANCE.getConfig().getString("Exam_Passed_Message", "你的审核已通过！现在可以联系审核员将你拉入服务器群啦！");
+                        newPlayer.sendMessage(passedMessage);
+                        newPlayer.sendMessage(new Image(SimpleImageGenerator.gen(passedMessage, 30)));
 
                         if(PLUGIN_INSTANCE.getConfig().getBoolean("Send_Pic_While_Invite")){
                             File picFile = new File(DATABASE, "HelpFile/invite.png");
@@ -449,7 +449,7 @@ public class AdminOperates {
         int[] slots = new int[2];
 
         try {
-            String[] slotsStrArray = message.split(" ");
+            String[] slotsStrArray = message.substring(6).split(" ");
             for (int i = 0; i < slotsStrArray.length ; i++) {
                 slots[i] = Integer.parseInt(slotsStrArray[i]);
             }

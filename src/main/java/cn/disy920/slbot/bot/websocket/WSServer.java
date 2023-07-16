@@ -366,9 +366,20 @@ public class WSServer extends WebSocketServer {
                     Map<String, Object> sendPacket = new HashMap<>();
                     sendPacket.put("type", "UUID");
 
-                    Map<String, String> params = new HashMap<>();
-                    params.put("ID", playerID);
-                    params.put("UUID", YamlDatabase.INSTANCE.getUUIDByID(playerID));
+                    Map<String, Object> params = new HashMap<>();
+
+                    if (YamlDatabase.INSTANCE.isInWhiteList(playerID)) {
+                        params.put("errorMsg", "");
+                        params.put("whitelisted", true);
+                        params.put("ID", playerID);
+                        params.put("UUID", YamlDatabase.INSTANCE.getUUIDByID(playerID));
+                    }
+                    else {
+                        params.put("errorMsg", PLUGIN_INSTANCE.getConfig().getString("Kick_Message"));
+                        params.put("whitelisted", false);
+                        params.put("ID", playerID);
+                        params.put("UUID", new UUID(0, 0));
+                    }
 
                     sendPacket.put("args", params);
                     conn.send(GsonFactory.getGsonInstance().toJson(sendPacket));

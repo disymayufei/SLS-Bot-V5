@@ -78,3 +78,6 @@ Kick_Message: "§d§l[StarLight服务器]§6§l你好像还没有绑定过你的
 
 # 提示去做审核题时机器人发送的消息
 Require_Exam_Message: "你好像还没通过审核哦！先去做一下审核题吧！审核题传送门：https://ks.wjx.top/vj/w6ktU8L.aspx"
+
+# 审核通过时私聊玩家的提示信息
+Exam_Passed_Message: "你的审核已通过！现在可以联系审核员将你拉入服务器群啦！"
