@@ -875,7 +875,7 @@ public class YamlDatabase implements Database {
                     for (int slot = 1; slot < whitelistYaml.getInt("size", 0) + 1; slot++) {
                         String dataID = whitelistYaml.getString("Bind_ID." + i + ".ID");
 
-                        if (playerID.equals(dataID)) {
+                        if (playerID.equalsIgnoreCase(dataID)) {
                             return IDFile.getName().replace(".yml", "");
                         }
                         else if (dataID == null) {
@@ -915,7 +915,7 @@ public class YamlDatabase implements Database {
                         String dataID = whitelistYaml.getString("Bind_ID." + i + ".ID");
                         String uuid = whitelistYaml.getString("Bind_ID." + i + ".UUID");
 
-                        if (playerID.equals(dataID)) {
+                        if (playerID.equalsIgnoreCase(dataID)) {
                             return uuid;
                         }
                         else if (dataID == null) {

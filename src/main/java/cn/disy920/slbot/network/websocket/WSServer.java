@@ -1,4 +1,4 @@
-package cn.disy920.slbot.bot.websocket;
+package cn.disy920.slbot.network.websocket;
 
 import cn.disy920.slbot.Main;
 import cn.disy920.slbot.bot.Bot;

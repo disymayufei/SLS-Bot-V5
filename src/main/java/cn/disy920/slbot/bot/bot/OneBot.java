@@ -251,6 +251,12 @@ public class OneBot implements RunnableBot{
                                 .executes(AdminOperates::findIDsByQQ)
                 )
                 .addCommand(
+                        adminCommandTreeBuilder.createNode("查询UUID")
+                                .needArgs(true)
+                                .setCaseInsensitive(true)
+                                .executes(AdminOperates::getStarLightUUID)
+                )
+                .addCommand(
                         adminCommandTreeBuilder.createNode("交换槽位")
                                 .alias("切换槽位")
                                 .needArgs(true)

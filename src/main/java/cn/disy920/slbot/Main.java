@@ -2,7 +2,7 @@ package cn.disy920.slbot;
 
 import cn.disy920.slbot.bot.bot.OneBot;
 import cn.disy920.slbot.bot.websocket.WSClient;
-import cn.disy920.slbot.bot.websocket.WSServer;
+import cn.disy920.slbot.network.websocket.WSServer;
 import cn.disy920.slbot.bukkit.database.YamlDatabase;
 import cn.disy920.slbot.bukkit.listeners.OnChat;
 import cn.disy920.slbot.bukkit.listeners.OnPlayerJoin;

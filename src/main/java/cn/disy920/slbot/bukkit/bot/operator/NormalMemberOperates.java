@@ -13,7 +13,7 @@ import cn.disy920.slbot.bot.message.At;
 import cn.disy920.slbot.bot.message.Image;
 import cn.disy920.slbot.bot.message.MessageChainBuilder;
 import cn.disy920.slbot.bot.message.QuoteReply;
-import cn.disy920.slbot.bot.websocket.WSServer;
+import cn.disy920.slbot.network.websocket.WSServer;
 import cn.disy920.slbot.bukkit.database.YamlDatabase;
 import cn.disy920.slbot.error.BasicError;
 import cn.disy920.slbot.error.ErrorPacket;
@@ -23,6 +23,7 @@ import cn.disy920.slbot.utils.LuckRating;
 import cn.disy920.slbot.utils.system.DateTime;
 import com.google.gson.Gson;
 import org.java_websocket.WebSocket;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -966,17 +967,7 @@ public class NormalMemberOperates {
 
         if (help_data_file_player.exists()){
             try {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(help_data_file_player), StandardCharsets.UTF_8));
-                StringBuilder result_builder = new StringBuilder(bufferedReader.readLine());
-
-                String temp_str;
-
-                while ((temp_str=bufferedReader.readLine()) != null){
-                    result_builder.append("\n");
-                    result_builder.append(temp_str);
-                }
-
-                return result_builder.toString();
+                return getStringFromFile(help_data_file_player);
             } catch (IOException e) {
                 LOGGER.error("读取玩家Q&A文件时失败，以下是错误的堆栈信息：");
                 e.printStackTrace();
@@ -995,21 +986,11 @@ public class NormalMemberOperates {
      * @return 管理员帮助文档中的内容，如果获取失败则返回一个不包含任何字符的字符串
      */
     private static String getAdminHelpText(){
-        File help_data_file_admin = new File(DATABASE, "HelpFile/admin_help_msg.txt");
+        File adminHelpFile = new File(DATABASE, "HelpFile/admin_help_msg.txt");
 
-        if (help_data_file_admin.exists()){
+        if (adminHelpFile.exists()){
             try {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(help_data_file_admin), StandardCharsets.UTF_8));
-                StringBuilder result_builder = new StringBuilder(bufferedReader.readLine());
-
-                String temp_str;
-
-                while ((temp_str=bufferedReader.readLine()) != null){
-                    result_builder.append("\n");
-                    result_builder.append(temp_str);
-                }
-
-                return result_builder.toString();
+                return getStringFromFile(adminHelpFile);
             } catch (IOException e) {
                 LOGGER.error("读取管理员帮助文件时失败，以下是错误的堆栈信息：");
                 e.printStackTrace();
@@ -1026,21 +1007,11 @@ public class NormalMemberOperates {
      * @return 玩家帮助文档中的内容，如果获取失败则返回一个不包含任何字符的字符串
      */
     private static String getPlayerHelpText(){
-        File help_data_file_player = new File(DATABASE, "HelpFile/player_help_msg.txt");
+        File playerHelpFile = new File(DATABASE, "HelpFile/player_help_msg.txt");
 
-        if (help_data_file_player.exists()){
+        if (playerHelpFile.exists()){
             try {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(help_data_file_player), StandardCharsets.UTF_8));
-                StringBuilder result_builder = new StringBuilder(bufferedReader.readLine());
-
-                String temp_str;
-
-                while ((temp_str=bufferedReader.readLine()) != null){
-                    result_builder.append("\n");
-                    result_builder.append(temp_str);
-                }
-
-                return result_builder.toString();
+                return getStringFromFile(playerHelpFile);
             } catch (IOException e) {
                 LOGGER.error("读取玩家帮助文件时失败，以下是错误的堆栈信息：");
                 e.printStackTrace();
@@ -1049,6 +1020,21 @@ public class NormalMemberOperates {
         }
 
         return "";
+    }
+
+    @NotNull
+    private static String getStringFromFile(File file) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
+        StringBuilder result_builder = new StringBuilder(bufferedReader.readLine());
+
+        String temp_str;
+
+        while ((temp_str=bufferedReader.readLine()) != null){
+            result_builder.append("\n");
+            result_builder.append(temp_str);
+        }
+
+        return result_builder.toString();
     }
 
 
@@ -1061,17 +1047,7 @@ public class NormalMemberOperates {
 
         if (welcome_file.exists()){
             try {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(welcome_file), StandardCharsets.UTF_8));
-                StringBuilder result_builder = new StringBuilder(bufferedReader.readLine());
-
-                String temp_str;
-
-                while ((temp_str=bufferedReader.readLine()) != null){
-                    result_builder.append("\n");
-                    result_builder.append(temp_str);
-                }
-
-                return result_builder.toString();
+                return getStringFromFile(welcome_file);
             } catch (IOException e) {
                 LOGGER.error("读取欢迎文件时失败，以下是错误的堆栈信息：");
                 e.printStackTrace();

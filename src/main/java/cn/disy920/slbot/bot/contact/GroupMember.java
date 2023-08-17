@@ -54,10 +54,19 @@ public class GroupMember extends Member {
         WSClient.botConnection.send(GsonFactory.getGsonInstance().toJson(packet));
     }
 
+
+    /**
+     * 踢出该群员，并不将其纳入黑名单
+     */
     public void kick() {
         kick(false);
     }
 
+
+    /**
+     * 踢出该群员
+     * @param blacklist 是否纳入黑名单
+     */
     public void kick(boolean blacklist) {
         JsonObject params = new JsonObject();
         params.addProperty("group_id", this.group.getID());
@@ -69,19 +78,55 @@ public class GroupMember extends Member {
         WSClient.botConnection.send(GsonFactory.getGsonInstance().toJson(packet));
     }
 
+
+    /**
+     * 以临时会话人的身份获取该群员
+     * @return 该群员对应的临时会话人
+     */
     public Stranger getAsStranger() {
         return this.stranger;
     }
 
+
+    /**
+     * 对该群员发送一条私聊消息
+     * @param messages 待发送的消息链
+     */
     @Override
     public void sendMessage(MessageChain messages) {
         this.stranger.sendMessage(messages);
     }
 
+
+    /**
+     * 封禁该群员
+     * @param duration 封禁时长，单位秒，设置为小于等于0的数值则为解除禁言
+     */
+    public void mute(long duration) {
+        if (duration < 0) {
+            duration = 0;
+        }
+        else if (duration > 4294967295L) {
+            duration = 4294967295L;
+        }
+
+        JsonObject params = new JsonObject();
+        params.addProperty("group_id", this.group.getID());
+        params.addProperty("user_id", this.id);
+        params.addProperty("duration", duration);
+
+        JsonObject packet = WSClient.pack("set_group_ban", params);
+
+        WSClient.botConnection.send(GsonFactory.getGsonInstance().toJson(packet));
+    }
+
+    /**
+     * 用于表示该群员权限
+     */
     public enum Role {
         OWNER,  // 群主
         ADMIN,  // 管理员
         MEMBER,  // 普通群员
-        UNKNOWN
+        UNKNOWN  // 未知权限
     }
 }

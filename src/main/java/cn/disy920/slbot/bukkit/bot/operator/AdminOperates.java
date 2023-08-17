@@ -327,13 +327,42 @@ public class AdminOperates {
                 .append(new At(event.getSender().getID()))
                 .append(" 玩家")
                 .append(playerID)
-                .append("的离线UUID为：\n")
+                .append("的离线UUID为：")
                 .append(uuidPair.getFirst().toString())
                 .build()
         );
 
         if(!uuidPair.getSecond()){
             event.getGroup().sendMessage("请注意，该玩家尚未绑定本服的白名单，请务必再次检查ID输入是否正确！如您确认正确，请忽略本警告。");
+        }
+
+        return Command.SUCCESS;
+    }
+
+    public static boolean getStarLightUUID(GroupMessageEvent event) {
+        String msg = event.getMessage().contentToString();
+        String playerID = msg.substring(8);
+
+        String uuid = YamlDatabase.INSTANCE.getUUIDByID(playerID);
+
+        if (uuid != null) {
+            event.getGroup().sendMessage(new MessageChainBuilder()
+                    .append(new At(event.getSender().getID()))
+                    .append(" 玩家")
+                    .append(playerID)
+                    .append("的StarLight UUID为：")
+                    .append(uuid)
+                    .build()
+            );
+        }
+        else {
+            event.getGroup().sendMessage(new MessageChainBuilder()
+                    .append(new At(event.getSender().getID()))
+                    .append(" 未查询到玩家")
+                    .append(playerID)
+                    .append("的StarLight UUID，可能由于该ID尚未被绑定")
+                    .build()
+            );
         }
 
         return Command.SUCCESS;

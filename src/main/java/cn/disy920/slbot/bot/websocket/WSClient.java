@@ -138,16 +138,7 @@ public class WSClient extends WebSocketClient {
                     Group group = new Group(packet.get("group_id").getAsLong());
                     int messageID = packet.get("message_id").getAsInt();
 
-                    long id = senderInfo.get("user_id").getAsLong();
-                    int age = new ValueShield<JsonElement, Integer>(senderInfo.get("age")).runOrReturn(JsonElement::getAsInt, 0);
-                    String nameCard = new ValueShield<JsonElement, String>(senderInfo.get("card")).runOrReturn(JsonElement::getAsString, "");
-                    String level = new ValueShield<JsonElement, String>(senderInfo.get("level")).runOrReturn(JsonElement::getAsString, "0");
-                    String nickName = new ValueShield<JsonElement, String>(senderInfo.get("nickname")).runOrReturn(JsonElement::getAsString, "");
-                    String title = new ValueShield<JsonElement, String>(senderInfo.get("title")).runOrReturn(JsonElement::getAsString, "");
-                    GroupMember.Role role = new ValueShield<JsonElement, GroupMember.Role>(senderInfo.get("role")).runOrReturn(ele -> GroupMember.Role.valueOf(ele.getAsString().toUpperCase()), GroupMember.Role.UNKNOWN);
-                    Member.Sex sex = new ValueShield<JsonElement, Member.Sex>(senderInfo.get("sex")).runOrReturn(ele -> Member.Sex.valueOf(ele.getAsString().toUpperCase()), Member.Sex.UNKNOWN);
-
-                    GroupMember sender = new GroupMember(id, group, nickName, nameCard, age, sex, level, role, title);
+                    GroupMember sender = Group.jsonObjectToMember(senderInfo, group);
                     MessageChain messageChain = MessageChain.deserializeFromJson(packet.get("message").getAsJsonArray(), messageID);
 
                     long timeStamp = packet.get("time").getAsLong();

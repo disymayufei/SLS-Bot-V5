@@ -21,7 +21,7 @@ public class RecordLogger extends SimpleLogger implements Logger {
     public RecordLogger(JavaPlugin plugin) {
         super(plugin);
 
-        this.logDir = new File(plugin.getDataFolder(), "logs");
+        this.logDir = new File(plugin.getDataFolder(), "Logs");
 
         if (!this.logDir.exists() || !this.logDir.isDirectory()) {
             this.logDir.mkdirs();
@@ -86,7 +86,7 @@ public class RecordLogger extends SimpleLogger implements Logger {
         }
 
         try {
-            Files.writeString(logFile.toPath(), String.format("\n[%s - %s] %s", STANDARD_TIME_FORMAT.format(new Date()), level.getLevel(), log), StandardOpenOption.APPEND);
+            Files.writeString(logFile.toPath(), String.format("[%s - %s] %s\n", STANDARD_TIME_FORMAT.format(new Date()), level.getLevel(), log), StandardOpenOption.APPEND);
         }
         catch (Exception e) {
             System.err.println("写入记录文件时出现错误，以下是错误的堆栈信息: ");
@@ -95,7 +95,7 @@ public class RecordLogger extends SimpleLogger implements Logger {
     }
 
     protected void writeErr(String log) {
-        final File logFile = new File(normalLogDir, "errors.log");
+        final File logFile = new File(errLogDir, "errors.log");
 
         if (!logFile.exists() || !logFile.isFile()) {
             try {
@@ -108,7 +108,7 @@ public class RecordLogger extends SimpleLogger implements Logger {
         }
 
         try {
-            Files.writeString(logFile.toPath(), String.format("\n[%s] %s", STANDARD_TIME_FORMAT.format(new Date()), log), StandardOpenOption.APPEND);
+            Files.writeString(logFile.toPath(), String.format("[%s] %s\n", STANDARD_TIME_FORMAT.format(new Date()), log), StandardOpenOption.APPEND);
         }
         catch (Exception e) {
             this.logger.warning("写入错误记录文件时出现错误，以下是错误的堆栈信息: ");
@@ -137,6 +137,10 @@ public class RecordLogger extends SimpleLogger implements Logger {
             this.logger.warning("写入Debug文件时出现错误，以下是错误的堆栈信息: ");
             e.printStackTrace();
         }
+    }
+
+    public File getLogDir() {
+        return this.logDir;
     }
 
     protected enum Level {
